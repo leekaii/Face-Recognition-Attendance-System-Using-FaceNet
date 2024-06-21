@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/webcam-easy/dist/webcam-easy.min.js"></script> 
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylecal.css') }}">
+    
+    <title>Student Management</title>
+    <style>
+        .table-image {
+            width: 100%;
+        }
+        #row1 {
+            position: relative;
+            top: 15px;
+            left: 15px;
+            z-index: 1000;
+        }
+        #logoutBtn {
+            position: relative;
+            right: -10px;
+            z-index: 1000;
+            height: 50px
+        }
+        #heading {
+            position: relative;
+            z-index: 1000;
+            text-align: center;
+        }
+        .calendar .days li:hover {
+            background-color: initial;
+            color: initial;
+        }
+        .calendar .days li.present:hover {
+            color: white;
+            background-color: rgb(105, 182, 90);
+        }
+        #editButton{
+            background-color: rgb(87, 135, 206);
+            border-color: rgb(87, 135, 206);
+        }
+        #deleteButton{
+            background-color: rgb(219, 75, 90);
+            border-color: rgb(219, 75, 90);
+        }
+        #attendanceButton{
+            background-color: rgb(255, 206, 60);
+            border-color: rgb(255, 206, 60);
+        }
+    </style>
+</head>
+<body class="bg-I" style="background-color:rgba(97,162,117,0.3);">
+    <div class="row mt-1" id="row1">
+        <!-- <div class="col-md-3">
+            <button id="backBtn" class="form-control2 back-button"><i class="bi bi-arrow-bar-left"> Back</i></button>
+        </div> -->
+        <div class="col-md-7">
+            <h3 id="heading">Manage Student</h3>
+        </div>
+        <div class="col-md-2 text-end form-control3">
+            <span class="switch">
+                <input type="checkbox" id="switcher" checked>
+                <label for="switcher"></label>
+            </span>
+        </div>
+        <div class="col-md-2 text-end">
+            <button id="logoutBtn" class="form-control2"><i class="bi bi-box-arrow-right"> Logout</i> </button>
+        </div>
+    </div>
+    <section class="dashboard-section">
+        <div class="container">
+            <div class="row mt-1">
+                <div class="col-md-6 text-end">
+                    <div class="input-group mb-3">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search...">
+                        <button class="form-control dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Classrooms</button>
+                        <!-- Move the dropdown-menu div outside of the button -->
+                        <div class="dropdown-menu" id="classDropdown">
+                            <button class="dropdown-item" type="button" value="">All Classes</button>
+                            <!-- Dropdown items will be dynamically added here -->
+                        </div>
+                        <button id="addRowBtn" class="form-control"><i class="bi bi-plus"> Add Student</i></button>
+                    </div>                    
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <table id="dataTable" class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th scope="col">Register No.</th>
+                            <th scope="col">Image</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Class</th>
+                            <th scope="col" class="text-center">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                              <th scope="row">{{ user['register_no'] }}</th>
+                              <td>{% if user['image_base64'] %}
+                                <img src="data:image/png;base64,{{ user['image_base64'] }}" class="table-image" alt="User Image" style="width: auto; height: 37px;">
+                                {% else %}
+                                    <!-- Add a placeholder image or text if no image is available -->
+                                    No Image Available
+                                {% endif %}
+                              <td>{{ user['name'] }}</td>
+                             <td>{{ user['class_name'] }}</td>
+                              <td class="d-flex justify-content-center">    
+                                  <button id="editButton" class="btn btn-primary edit me-2" onclick="openEditModal('{{ user[0] }}', '{{ user[1] }}', '{{ user[2] }}', '{{ user[3] }}')"><i class="bi bi-pencil-square" title="Edit"> Edit</i></button>
+                                  <button id="deleteButton" class="btn btn-danger delete ms-2"><i class="bi bi-trash3" title="Delete"> Delete</i></button>
+                                  <button id="attendanceButton" class="btn btn-warning Attendance ms-2" onclick="viewAttendance('{{ user['register_no'] }}')"><i class="bi bi-calendar" title="Attendance"> View Attendance</i></button>
+                              </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                      </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add User Modal -->
+    <div class="modal fade" id="addRowModal" tabindex="-1" aria-labelledby="addRowModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addRowModalLabel">Add Student</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addRowForm">
+                        <div class="mb-3">
+                            <label for="register_no" class="form-label">Register No.</label>
+                            <input type="text" class="form-control1" id="register_no" name="register_no" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addImage" class="form-label">Image</label>
+                            <img id="previewImage" class="mt-2" src="#" alt="Preview" style="max-width: 100px; display: none; margin-left: 20px;">
+                            <div id="webcamContainer" style="margin-left: 20px; margin-top: 11px;"></div>
+                            <button type="button" class="btn btn-secondary mt-2" id="startWebcamBtn" style="margin-left: 20px">Use Webcam</button>
+                            <button type="button" class="btn btn-secondary mt-2" id="takePictureBtn" style="margin-left: 20px">Take Picture</button>
+                            <input type="file" class="form-control1" id="addImage" name="addImage" accept="image/*">
+                        </div>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control1" id="name" name="name" required>
+                        </div> 
+                        <div class="mb-3">
+                            <label for="addClass" class="form-label">Class</label>
+                            <select class="form-select" id="class_name" name="class_name" required>
+                                <!-- Class names will be dynamically populated here -->
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="addClose" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveRowBtn">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Modal for error-->
+<div class="modal fade" id="errorRowModal" tabindex="-1" aria-labelledby="addRowModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addRowModalLabel">Alert! Try Again</h5>
+            </div>
+            <div class="modal-body">
+                <p>Register number already exists.</p>
+                <input type="hidden" id="saveRowBtn" name="saveRowBtn">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Edit User Modal -->
+    <div class="modal fade" id="editRowModal" tabindex="-1" aria-labelledby="editRowModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editRowModalLabel">Edit Student</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editRowForm">
+                        <input type="hidden" id="editId" name="editId">
+                        <div class="mb-3">
+                            <label for="editRegisterNo" class="form-label">Register No.</label>
+                            <input type="text" class="form-control1" id="editRegisterNo" name="editRegisterNo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editName" class="form-label">Name</label>
+                            <input type="text" class="form-control1" id="editName" name="editName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editClass" class="form-label">Class</label>
+                            <select class="form-select" id="editClass" name="editClass" required>
+                                <!-- Class names will be dynamically populated here -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editImage" class="form-label">Image</label>
+                            <img id="editPreviewImage" class="mt-2" src="#" alt="Preview" style="max-width: 100px; display: none; margin-left: 20px;">
+                            <div id="editWebcamContainer" style="margin-left: 20px; margin-top: 11px;"></div>
+                            <button type="button" class="btn btn-secondary mt-2" id="editStartWebcamBtn" style="margin-left: 20px">Use Webcam</button>
+                            <button type="button" class="btn btn-secondary mt-2" id="editTakePictureBtn" style="display: none; margin-left: 20px;">Take Picture</button>
+                            <input type="file" class="form-control1" id="editImage" name="editImage" accept="image/*">
+                            <input type="hidden" id="editImageBase64" name="editImageBase64">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="editClose" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="updateRowBtn">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete User Modal -->
+    <div class="modal fade" id="deleteRowModal" tabindex="-1" aria-labelledby="deleteRowModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteRowModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this user?</p>
+                    <input type="hidden" id="deleteId" name="deleteId">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Modal -->
+    <div class="modal fade" id="TableModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Attendance</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="registerNo">
+                    <div class="date-picker-container">
+                        <div>
+                        <label for="startDate">Start Date:</label>
+                        <input class="form-control1" type="date" id="startDate" name="startDate">
+                        </div>
+                        <div>
+                        <label for="endDate">End Date:</label>
+                        <input class="form-control1" type="date" id="endDate" name="endDate">
+                        </div>
+                        <button class="form-control" type="button"  onclick="filterAttendance()" >Filter</button>
+                    </div>
+                    <table id="dataTable" class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Date</th>
+                                <th scope="col">Log In Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceBody">
+                            <!-- Rows will be inserted dynamically here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer"></div>
+            </div>
+        </div>
+    </div>
+
+        <!--Modal for error-->
+<div class="modal fade" id="errorRowwModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Alert</h5>
+            </div>
+            <div class="modal-body">
+                <p>No attendance records found!</p>
+                <input type="hidden" id="attendanceButton" name="attendanceButton">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const webCamElement = document.createElement('video');
+            const canvasElement = document.createElement('canvas');
+            // const webcam = new Webcam(webCamElement, "user", canvasElement);
+            let webcam = null;
+            const startWebcamBtn = document.getElementById('startWebcamBtn');
+            const takePictureBtn = document.getElementById('takePictureBtn');
+            document.getElementById('startWebcamBtn').addEventListener('click', function() {
+                // Reset the webcam container
+                const webcamContainer = document.getElementById('webcamContainer');
+                while (webcamContainer.firstChild) {
+                    webcamContainer.removeChild(webcamContainer.firstChild);
+                }
+                webcamContainer.appendChild(webCamElement);
+                webcam = new Webcam(webCamElement, "user", canvasElement);
+                webcam.start();
+                // Adjust button visibility
+                startWebcamBtn.style.display = 'none';
+                takePictureBtn.style.display = 'block';
+                webCamElement.width = 400;
+                webCamElement.height = 300;
+                
+                webcamContainer.appendChild(webCamElement);
+            });
+            
+            document.getElementById('takePictureBtn').addEventListener('click', function() {
+                const picture = webcam.snap();
+                const previewImage = document.getElementById('previewImage');
+                previewImage.src = picture;
+                previewImage.style.display = 'block';
+                webcam.stop();
+                webCamElement.width = 0;
+                webCamElement.height = 0;
+                document.getElementById('takePictureBtn').style.display = 'none';
+                document.getElementById('startWebcamBtn').style.display = 'block';
+
+                // Convert the image to base64 and set it in the hidden input field
+                const fileInput = document.getElementById('editImage');
+                const blob = dataURLtoBlob(picture);
+                const reader = new FileReader();
+                reader.onloadend = function() {
+                    const base64Image = reader.result.split(',')[1];
+                    fileInput.value = base64Image;
+                };
+                reader.readAsDataURL(blob);
+            });
+
+            document.getElementById('addClose').addEventListener('click', function() {
+                webcam.stop();
+            });
+            
+            function dataURLtoBlob(dataURL) {
+                const parts = dataURL.split(',');
+                const mime = parts[0].match(/:(.*?);/)[1];
+                const bstr = atob(parts[1]);
+                let n = bstr.length;
+                const u8arr = new Uint8Array(n);
+                while (n--) {
+                    u8arr[n] = bstr.charCodeAt(n);
+                }
+                return new Blob([u8arr], { type: mime });
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const editWebCamElement = document.createElement('video');
+            const editCanvasElement = document.createElement('canvas');
+            // const editWebcam = new Webcam(editWebCamElement, "user", editCanvasElement);
+            let editWebcam = null;
+            const editStartWebcamBtn = document.getElementById('editStartWebcamBtn');
+            const editTakePictureBtn = document.getElementById('editTakePictureBtn');
+            document.getElementById('editStartWebcamBtn').addEventListener('click', function() {
+                const editWebcamContainer = document.getElementById('editWebcamContainer');
+                while (editWebcamContainer.firstChild) {
+                    editWebcamContainer.removeChild(editWebcamContainer.firstChild);
+                }
+                editWebcamContainer.appendChild(editWebCamElement);
+                editWebcam = new Webcam(editWebCamElement, "user", editCanvasElement);
+                editWebcam.start();
+                editStartWebcamBtn.style.display = 'none';
+                editTakePictureBtn.style.display = 'block';
+                
+                editWebCamElement.width = 400;
+                editWebCamElement.height = 300;
+                
+                editWebcamContainer.appendChild(editWebCamElement);
+            });
+            
+            document.getElementById('editTakePictureBtn').addEventListener('click', function() {
+                const picture = editWebcam.snap();
+                const editPreviewImage = document.getElementById('editPreviewImage');
+                editPreviewImage.src = picture;
+                editPreviewImage.style.display = 'block';
+                editWebcam.stop();
+                editWebCamElement.width = 0;
+                editWebCamElement.height = 0;
+                document.getElementById('editTakePictureBtn').style.display = 'none';
+                document.getElementById('editStartWebcamBtn').style.display = 'block';
+
+                const fileInput = document.getElementById('editImageBase64');
+                const blob = dataURLtoBlob(picture);
+                const reader = new FileReader();
+                reader.onloadend = function() {
+                    const base64Image = reader.result.split(',')[1];
+                    fileInput.value = base64Image;
+                };
+                reader.readAsDataURL(blob);
+            });
+
+            document.getElementById('editClose').addEventListener('click', function() {
+                editWebcam.stop();
+            });
+
+            $('#editRowModal').on('hidden.bs.modal', function () {
+                console.log("Resetting modal content...");
+                while (editWebcamContainer.firstChild) {
+                    editWebcamContainer.removeChild(editWebcamContainer.firstChild);
+                }
+                editPreviewImage.style.display = 'none';
+                editStartWebcamBtn.style.display = 'block';
+                editTakePictureBtn.style.display = 'none';
+                editRowForm.reset();
+            });
+
+            function dataURLtoBlob(dataURL) {
+                var parts = dataURL.split(',');
+                var mime = parts[0].match(/:(.*?);/)[1];
+                var bstr = atob(parts[1]);
+                var n = bstr.length;
+                var u8arr = new Uint8Array(n);
+                while (n--) {
+                    u8arr[n] = bstr.charCodeAt(n);
+                }
+                return new Blob([u8arr], { type: mime });
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const addRowBtn = document.getElementById('addRowBtn');
+            // const saveRowBtn = document.getElementById('saveRowBtn');   
+            const dataTable = document.getElementById('dataTable').getElementsByTagName('tbody')[0];
+            const classSelect = document.getElementById('class_name');
+
+            addRowBtn.addEventListener('click', function() {
+                // Reset the form and preview image when adding a new user
+                document.getElementById('addRowForm').reset();
+                document.getElementById('previewImage').src = 'data:,';
+                document.getElementById('previewImage').style.display = 'none';
+                document.getElementById('startWebcamBtn').style.display = 'block';
+                document.getElementById('takePictureBtn').style.display = 'none';
+
+                $('#addRowModal').modal('show');$.ajax({
+                url: '/get_class_names',
+                type: 'GET',
+                success: function(response) {
+                    // Clear existing options
+                    while (classSelect.firstChild) {
+                        classSelect.removeChild(classSelect.firstChild);
+                    }
+                    // Populate the dropdown list with class names
+                    response.forEach(function(className) {
+                        const option = document.createElement('option');
+                        option.value = className;
+                        option.textContent = className;
+                        classSelect.appendChild(option);
+                    });
+                },
+                error: function(xhr, status, error) {
+                    // Handle errors here
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+            
+            document.getElementById('saveRowBtn').addEventListener('click', function() {
+                const register_no = document.getElementById('register_no').value;
+                const name = document.getElementById('name').value;
+                const class_name = document.getElementById('class_name').value;
+                const imageUrl = document.getElementById('previewImage').getAttribute('src'); 
+                const fileInput = document.getElementById('addImage').files[0];
+                let base64Image = null;
+
+                // Check if an image has been captured from the webcam or a file has been selected
+                if (!fileInput && imageUrl === 'data:,') {
+                    alert('Please capture an image.');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onloadend = function() {
+
+                if (fileInput) {
+                    base64Image = reader.result.split(',')[1];
+                }
+                else if (!fileInput) {
+                    base64Image = imageUrl.split(',')[1];
+                }
+
+                const payload = {
+                    register_no: register_no,
+                    name: name,
+                    class_name: class_name,
+                    image: base64Image
+                };  
+
+                // Send the form data to the server using AJAX
+                $.ajax({
+                    url: '/add_user', 
+                    type: 'POST',
+                    data: JSON.stringify(payload),
+                    contentType: 'application/json', // Prevent jQuery from setting the content type
+                    success: function(response) {
+                        const userId = response.user_id;
+                        
+                        // Upon successful insertion, add the new row to the table
+                        const newRow = `
+                            <tr>
+                                <th scope="row">${register_no}</th>
+                                <td><img src="data:image/png;base64,${base64Image}" class="table-image" alt="image" style="width: auto; height: 37px;"></td>
+                                <td>${name}</td>
+                                <td>${class_name}</td>
+                                <td class="d-flex justify-content-center">
+                                    <button id="editButton" class="btn btn-primary edit me-2"><i class="bi bi-pencil-square" title="Edit"> Edit</i></button>
+                                    <button id="deleteButton" class="btn btn-danger delete ms-2"><i class="bi bi-trash3" title="Delete"> Delete</i></button>
+                                    <button id="attendanceButton" class="btn btn-warning Attendance ms-2" onclick="viewAttendance(this)"><i class="bi bi-calendar" title="Attendance"> View Attendance</i></button>
+                                </td>
+                            </tr>
+                        `;
+                        dataTable.insertAdjacentHTML('beforeend', newRow);
+
+                        // Hide the modal and reset the form
+                        $('#addRowModal').modal('hide');
+                        document.getElementById('addRowForm').reset();
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                    // Handle errors here
+                    // console.error(xhr.responseText);
+                    console.error("Register number already exists", errorThrown);
+                    $('#addRowModal').modal('hide');
+                    $('#errorRowModal').modal('show');
+                }
+                });
+            };
+        
+            if (fileInput) {
+            reader.readAsDataURL(fileInput);
+            } else {
+                // Directly set the base64Image from imageUrl if no file input
+                base64Image = imageUrl.split(',')[1];
+                const payload = {
+                    register_no: register_no,
+                    name: name,
+                    class_name: class_name,
+                    image: base64Image
+                };
+
+                // Send the form data to the server using AJAX
+                $.ajax({
+                    url: '/add_user',
+                    type: 'POST',
+                    data: JSON.stringify(payload),
+                    contentType: 'application/json', // Prevent jQuery from setting the content type
+                    success: function(response) {
+                        const userId = response.user_id;
+
+                        // Upon successful insertion, add the new row to the table
+                        const newRow = `
+                            <tr>
+                                <th scope="row">${register_no}</th>
+                                <td><img src="data:image/png;base64,${base64Image}" class="table-image" alt="image" style="width: auto; height: 37px;"></td>
+                                <td>${name}</td>
+                                <td>${class_name}</td>
+                                <td class="d-flex justify-content-center">
+                                    <button id="editButton" class="btn btn-primary edit me-2"><i class="bi bi-pencil-square" title="Edit"> Edit</i></button>
+                                    <button id="deleteButton" class="btn btn-danger delete ms-2"><i class="bi bi-trash3" title="Delete"> Delete</i></button>
+                                    <button id="attendanceButton" class="btn btn-warning Attendance ms-2" onclick="viewattendance(this)"><i class="bi bi-calendar" title="Attendance"> View Attendance</i></button>
+                                </td>
+                            </tr>
+                        `;
+                        dataTable.insertAdjacentHTML('beforeend', newRow);
+
+                        // Hide the modal and reset the form
+                        $('#addRowModal').modal('hide');
+                        document.getElementById('addRowForm').reset();
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle errors here
+                        console.error(xhr.responseText);
+                        const errorMessage = JSON.parse(xhr.responseText).error; // Extract error message
+                        alert(errorMessage); // Display error message to the user
+                    }
+                });
+            }
+            });
+        });
+
+        $('#dataTable').on('click', '.edit', function() {
+            // Extract register number from the table row
+            var registerNo = $(this).closest('tr').find('th').text().trim();
+            
+            // Call the Flask route to retrieve user data by register number
+            $.ajax({
+                url: '/get_user_data_by_register_no/' + registerNo,
+                type: 'GET',
+                success: function(response) {
+                    // Check if the response contains the 'error' key
+                    if ('error' in response) {
+                        // Handle error
+                        console.error(response.error);
+                    } else {
+                        // Populate the edit modal fields with the retrieved user data
+                        $('#editId').val(response.id);
+                        $('#editRegisterNo').val(response.register_no);
+                        $('#editName').val(response.name);
+                        
+                        // Fetch class names from the server and populate the dropdown list
+                        $.ajax({
+                                url: '/get_class_names',
+                                type: 'GET',
+                                success: function(classNames) {
+                                    // Clear existing options
+                                    $('#editClass').empty();
+                                    
+                                    // Populate the dropdown list with class names
+                                    classNames.forEach(function(className) {
+                                        const option = $('<option>').val(className).text(className);
+                                        $('#editClass').append(option);
+                                    });
+
+                                    // Set the selected class name
+                                    $('#editClass').val(response.class);
+                                },
+
+                            error: function(xhr, status, error) {
+                                // Handle errors here
+                                console.error(xhr.responseText);
+                            }
+                        });
+                        
+                        // Show the edit modal
+                        $('#editRowModal').modal('show');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Handle errors here
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+
+        // Event delegation for edit button
+        $('#dataTable').on('click', '.edit', function() {
+            var registerNo = $(this).closest('tr').find('th').text().trim();
+            
+            $.ajax({
+                url: '/get_user_data_by_register_no/' + registerNo,
+                type: 'GET',
+                success: function(response) {
+                    if ('error' in response) {
+                        console.error(response.error);
+                    } else {
+                        $('#editId').val(response.id);
+                        $('#editRegisterNo').val(response.register_no);
+                        $('#editName').val(response.name);
+                        
+                        $.ajax({
+                            url: '/get_class_names',
+                            type: 'GET',
+                            success: function(classNames) {
+                                $('#editClass').empty();
+                                classNames.forEach(function(className) {
+                                    const option = $('<option>').val(className).text(className);
+                                    $('#editClass').append(option);
+                                });
+                                $('#editClass').val(response.class);
+                            },
+                            error: function(xhr, status, error) {
+                                console.error(xhr.responseText);
+                            }
+                        });
+
+                        $('#editRowModal').modal('show');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+
+        $('#updateRowBtn').click(function() {
+            // Extract updated information from the edit modal
+            var userId = $('#editId').val();
+            var registerNo = $('#editRegisterNo').val();
+            var name = $('#editName').val();
+            var className = $('#editClass').val();
+            var base64Image = $('#editImageBase64').val();
+            var fileInput = $('#editImage')[0].files[0]; // Get the selected file
+
+            // Check if a file is selected
+            if (fileInput) {
+                // Create a FileReader object to read the file content
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    // Get the base64 encoded string
+                    var fileContent = e.target.result.split(',')[1]; // Remove the data URL prefix
+                    // Send updated data to the server using AJAX for database update
+                    $.ajax({
+                        url: '/update_user_data',
+                        type: 'POST',
+                        data: {
+                            id: userId,
+                            register_no: registerNo,
+                            name: name,
+                            class_name: className,
+                            content: fileContent // Send base64 encoded file content
+                        },
+                        success: function(response) {
+                            // If update is successful, reload the page or update UI as needed
+                            location.reload();
+                        },
+                        error: function(xhr, status, error) {
+                            // Handle errors here
+                            console.error(xhr.responseText);
+                        }
+                    });
+                };
+                // Read the file content as data URL (base64)
+                reader.readAsDataURL(fileInput);
+            } else if (base64Image) {
+                // If a base64 image is available (captured from webcam), send it to the server
+                console.log("else if base64image")
+                $.ajax({
+                    url: '/update_user_data',
+                    type: 'POST',
+                    data: {
+                        id: userId,
+                        register_no: registerNo,
+                        name: name,
+                        class_name: className,
+                        content: base64Image
+                    },
+                    success: function(response) {
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            } else {
+                $.ajax({
+                    url: '/update_user_data',
+                    type: 'POST',
+                    data: {
+                        id: userId,
+                        register_no: registerNo,
+                        name: name,
+                        class_name: className
+                    },
+                    success: function(response) {
+                        // If update is successful, reload the page or update UI as needed
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle errors here
+                        console.error(xhr.responseText);
+                    }
+                    });
+                }
+            });
+        
+        // Event delegation for delete button
+        $('#dataTable').on('click', '.delete', function() {
+            var userId = $(this).closest('tr').find('th').text().trim();
+            $('#deleteRowModal').modal('show');
+            $('#deleteId').val(userId);
+        });
+
+        // Confirm delete button click event inside the delete modal
+        $('#confirmDeleteBtn').click(function() {
+            // Extract user ID from the delete modal
+            var userId = $('#deleteId').val();
+            
+            // Send request to delete user data
+            $.ajax({
+                url: '/delete_user_data',
+                type: 'POST',
+                data: {
+                    id: userId
+                },
+                success: function(response) {
+                    // If delete is successful, reload the page or update UI as needed
+                    location.reload();
+                },
+                error: function(xhr, status, error) {
+                    // Handle errors here
+                    console.error(xhr.responseText);
+                }
+                });
+            });
+
+        $(document).ready(function() {
+                $('#searchInput').on('keyup', function() {
+                    var value = $(this).val().toLowerCase();
+                    $('#dataTable tbody tr').filter(function() {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
+            });
+        
+        // Function to view attendance for a specific user
+        function viewAttendance(registerNo) {
+            // Store register number in a hidden input field
+            document.getElementById('registerNo').value = registerNo;
+            // Initially fetch all attendance data when modal is opened
+            fetchAttendanceData(registerNo);
+        }
+
+        function filterAttendance() {
+            const registerNo = document.getElementById('registerNo').value; // Assuming you have a hidden input with the user's register number
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            fetchAttendanceData(registerNo, startDate, endDate);
+        }
+
+        function fetchAttendanceData(registerNo, startDate = '', endDate = '') {
+            let url = `/get_user_attendance/${registerNo}`;
+            if (startDate && endDate) {
+                url += `?start_date=${startDate}&end_date=${endDate}`;
+            }
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const attendanceBody = document.getElementById('attendanceBody');
+                        attendanceBody.innerHTML = '';  // Clear existing rows
+
+                        data.attendance.forEach(record => {
+                            const row = document.createElement('tr');
+                            const dateCell = document.createElement('td');
+                            const timeCell = document.createElement('td');
+
+                            dateCell.textContent = record.date;
+                            timeCell.textContent = record.time;
+
+                            row.appendChild(dateCell);
+                            row.appendChild(timeCell);
+                            attendanceBody.appendChild(row);
+                        });
+
+                        $('#TableModal').modal('show');
+                    } else {
+                        // alert(data.message);
+                        console.error('No attendance records', data.message);
+                $('#errorRowwModal').modal('show');
+                    }
+                })
+                .catch(error => console.error('Error fetching attendance data:', error));
+        }
+
+
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+                    $.ajax({
+                        url: '/logout',
+                        type: 'POST',
+                        success: function(response) {
+                            // Redirect to welcome.html
+                            window.location.href = '/admin_login';
+                        },
+                        error: function(error) {
+                            console.error("There was an error logging out:", error);
+                        }
+                    });
+                });
+
+        const switcher = document.getElementById('switcher');
+        switcher.addEventListener('change', () => {
+            if (switcher.checked) {
+                window.location.href =  "dashboard";
+            } else {
+                window.location.href ="classm";
+            }
+        });
+        
+        // Fetch class names and populate the dropdown menu
+        function populateClassDropdown() {
+            fetch('/get_class_names')
+                .then(response => response.json())
+                .then(classNames => {
+                    const dropdown = document.getElementById('classDropdown');
+                    dropdown.innerHTML = '';
+                    const allClassesOption = document.createElement('button');
+                    allClassesOption.classList.add('dropdown-item');
+                    allClassesOption.type = 'button';
+                    allClassesOption.value = '';
+                    allClassesOption.textContent = 'All Classes';
+                    dropdown.appendChild(allClassesOption);
+                    classNames.forEach(className => {
+                        const option = document.createElement('button');
+                        option.classList.add('dropdown-item');
+                        option.type = 'button';
+                        option.value = className;
+                        option.textContent = className;
+                        option.addEventListener('click', function () {
+                            const selectedClass = this.value;
+                            filterTableByClass(selectedClass);
+                        });
+                        dropdown.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching class names:', error);
+                });
+        }
+
+        // Function to show all rows in the table
+        function showAllRows() {
+            const rows = document.querySelectorAll('#dataTable tbody tr');
+            rows.forEach(row => {
+                row.style.display = '';
+            });
+        }
+
+        // Function to filter the table by class
+        function filterTableByClass(className) {
+            const rows = document.querySelectorAll('#dataTable tbody tr');
+            rows.forEach(row => {
+                const classCell = row.querySelector('td:nth-child(4)');
+                if (className === '' || className === 'All Classes') {
+                    showAllRows(); // Show all rows if "All Classes" is selected
+                } else {
+                    if (classCell.textContent === className) {
+                        row.style.display = ''; // Show the row if it matches the selected class
+                    } else {
+                        row.style.display = 'none'; // Hide the row if it doesn't match the selected class
+                    }
+                }
+            });
+        }
+
+        // Run the function to populate the dropdown menu on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            populateClassDropdown();
+        });
+
+        // Event listener for dropdown item click
+        document.addEventListener('click', function (event) {
+            if (event.target.classList.contains('dropdown-item')) {
+                const selectedClass = event.target.value;
+                filterTableByClass(selectedClass);
+            }
+        });
+
+        $(document).ready(function(){
+            $('.dropdown-toggle').dropdown();
+        });
+        
+        // Run the function to populate the dropdown menu on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            populateClassDropdown();
+        });
+    </script>
+</body>
+</html>
