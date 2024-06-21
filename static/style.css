@@ -1,0 +1,378 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* background-color: rgb(255,218,185) */
+    text-decoration: none;
+}
+.cc-1{
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(255,255,255);
+    /* background-image: bg; */
+}  
+
+.bg-I{
+    width: 100%;
+    height: 100vh;
+    z-index: -1;
+    position: absolute;
+}
+
+.form-control {
+    /* background: transparent; */
+    border: none;
+    width: 300px;
+    height: 50px;
+    color: rgb(255, 255, 255);
+    border: 1px solid transparent;
+    background:rgba(92,165,148,255);
+    border-radius: 40px;
+    padding-left: 20px;
+    padding-right: 20px;
+    transition: 0.3s; 
+    margin-bottom: 20px;
+    text-decoration: none;
+    border-color:transparent;
+}
+
+.form-control::-webkit-input-placeholder { 
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.form-control::placeholder {
+    color: white; /* Change this color to the desired color */
+}
+.form-control:hover::placeholder,
+.form-control:focus::placeholder{
+  color: rgba(92,165,148,255);
+  border-color: none; /* Change this color to the desired color */
+}
+
+.form-control:hover,
+.form-control:focus {
+    background: rgb(236, 229, 229);
+    outline: none;
+    box-shadow: none;
+    /* border-color: rgba(74, 108, 136, 0.4); */
+    color: rgba(92,165,148,255);
+    text-decoration: none;
+}
+
+.table-image{
+    width: 2rem;
+}
+
+.C1{
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  text-align: center;
+  justify-content: center;
+}
+
+.C2{
+    display: flex;
+  }
+  .C2, .form-control{
+    margin: 10px;
+  }
+
+.form-control1{
+  background: transparent;
+  border: none;
+  width: 300px;
+  height: 50px;
+  color: rgb(36, 58, 138) !important;
+  border: 1px solid transparent;
+  background: rgb(255 255 255 / 35%);
+  border-radius: 40px;
+  padding-left: 20px;
+  padding-right: 20px;
+  transition: 0.3s; 
+  margin-bottom: 20px;
+  text-decoration: none;
+  border-color:rgb(96, 95, 95);
+}
+.form-control1::-webkit-input-placeholder { 
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.form-control1::placeholder {
+  color: rgb(36, 58, 138) !important; /* Change this color to the desired color */
+}
+.form-control1:hover,
+.form-control1:focus {
+  background: transparent;
+  outline: none;
+  box-shadow: none;
+  border-color: rgba(74, 108, 136, 0.4);
+  color: rgb(10, 2, 40);
+  text-decoration: none;
+}
+
+.form-control2{
+  background: transparent;
+  border: none;
+  width: 125px;
+  height: 40px;
+  color: rgb(255, 255, 255);
+  border: 1px solid transparent;
+  background: rgba(102,196,208,255);
+  border-radius: 40px;
+  padding-left: 20px;
+  padding-right: 20px;
+  transition: 0.3s; 
+  margin-bottom: 20px;
+  text-decoration: none;
+    /* border-color: rgb(10, 2, 40); */
+}
+
+.form-control2:hover,
+.form-control2:focus {
+  background: rgb(236, 229, 229);
+  outline: none;
+  box-shadow: none;
+ /*  border-color: rgb(102,196,208); */
+  color: rgb(102,196,208);
+  text-decoration: none;
+}
+
+#webCam {
+    border: 2px solid #000; /* Example border style */
+    border-radius: 10px; /* Example border radius */
+}
+
+.spinner-wrapper{
+    background-color: #000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 99;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#formigidk {
+    padding-bottom: 0px;
+    padding-top: 0px;
+}
+
+.form-control4 {
+    background: transparent;
+    border: none;
+    width: 235px;
+    height: 45px;
+    color: rgb(255, 255, 255);
+    border: 1px solid transparent;
+    border-radius: 0px;
+    padding-left: 0px;
+    padding-right: 15px;
+    transition: 0.3s; 
+    margin-bottom: 20px;
+    text-decoration: none;
+    border-color:transparent;
+}
+
+.form-control4::placeholder {
+    color: rgb(255, 255, 255); /* Change this color to the desired color */
+}
+.form-control4:hover,
+.form-control4:focus {
+    background: transparent;
+    outline: none;
+    box-shadow: none;
+    color:rgba(92,165,148,255);
+    text-decoration: none;
+
+}
+.form-control4:hover::placeholder,
+.form-control4:focus::placeholder{
+  color: rgba(92,165,148,255);
+  border-color: none; /* Change this color to the desired color */
+}
+
+.form-control5 {
+    background: transparent;
+    border: none;
+    width: 0px;
+    height: 45px;
+    color: rgb(102,196,208);
+    border-radius: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 0px;
+    transition: 0.3s; 
+    text-decoration: none;
+    border-color:transparent;
+    position: relative;
+}
+
+.form-control5:hover,
+.form-control5:focus {
+    background: transparent;
+    outline: none;
+    box-shadow: none;
+    color: rgba(92,165,148,255);
+    text-decoration: none;
+}
+.form-control5:hover::placeholder,
+.form-control5:focus::placeholder{
+  color: rgba(92,165,148,255);
+  border-color: none; /* Change this color to the desired color */
+}
+
+.input-group {
+    position: relative;
+  }
+  
+  .input-group-append {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0;
+    border: none;
+  }
+  
+  .input-group-append .btn {
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    width: 30px;
+    height: 50px;
+    color: rgb(36, 58, 138) !important;
+    margin-bottom: 20px;
+    padding-right: 10px;
+    text-decoration: none;
+    border-color: transparent;
+    position: relative;
+  }
+
+  .form-control3{
+    background: transparent;
+    border: none;
+    width: 300px;
+    height: 50px;
+    display: flex;
+}
+
+.switch {
+    position: relative;
+    width: 200px;
+    height: 50px;
+    border-radius: 25px;
+  }
+
+.switch input {
+    appearance: none;
+    width: 200px;
+    height: 50px;
+    border-radius: 25px;
+    background: rgb(85, 84, 84);
+    outline: none;
+    cursor: pointer;
+}
+
+  .switch input::before,
+  .switch input::after{
+    z-index:2;
+    position: absolute;
+    top:56%;
+    transform: translateY(-50%);
+  }
+
+  .switch input::before{
+    content: "Student";
+    left:20px;
+    padding-bottom: 10px;
+  }
+  .switch input::after{
+    content: "Class";
+    right:20px;
+    padding-bottom: 10px;
+  }
+
+  .switch input:checked{
+    border: 1px solid transparent;
+    background: rgba(102,196,208,0.3);
+    border-radius: 40px;
+  }
+
+  .switch label{
+    z-index: 1;
+    position: absolute;
+    top: 10px;
+    bottom: 4px;
+    border-radius: 20px;
+  }
+
+  .switch input {
+    transition: 0.25s;
+  }
+
+  .switch input:checked::after{
+    color: white;
+    transition: color 0.5s;
+  }
+
+  .switch input:checked::before{
+    color: rgb(0, 0, 0);
+    transition: color 0.5s;
+  }
+
+  .switch input:checked+label{
+    left: 10px;
+    right: 100px;
+    height: 30px;
+    border: 1px solid transparent;
+    background: rgba(102,196,208,0.3);
+    border-radius: 40px;
+    transition: left 0.5s, right 0.4s;
+    margin-bottom: 5px;
+  }
+
+  .switch input:not(:checked){
+    border: 1px solid transparent;
+    background:  rgba(102,196,208,0.3);
+    color: rgb(36, 58, 138) !important;
+    border-radius: 40px;
+    transition: background 0.4s;
+  }
+
+  .switch input:not(:checked)::before{
+   color: white;
+   transition: color 0.5s;
+  }
+
+  .switch input:not(:checked)::after{
+    color:  rgb(0, 0, 0) ;
+   transition: color 0.5s 0.2s;
+  }
+
+  .switch input:not(:checked)+label{
+    left: 100px;
+    right: 10px;
+    height: 30px;
+    color: rgb(255, 255, 255) !important;
+    border: 1px solid transparent;
+    background: rgba(102,196,208,0.3);
+    border-radius: 40px;
+    transition: left 0.4s 0.2s, right 0.5s , background 0.3s;
+    margin-bottom: 5px;
+  }
+
+  .modal-body1 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0%;
+    margin: 0%;
+}
