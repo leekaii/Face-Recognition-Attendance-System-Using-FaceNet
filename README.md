@@ -1,5 +1,5 @@
 # Face Recognition Attendance System Using FaceNet
-Build this interactive project in a team of four talented individuals: Christopher,Rejoy, and Nitin.
+Build this interactive project in a team of three other talented individuals: Christopher, Rejoy, and Nitin.
 
 Software Used Front End (UI) 
 HTML
