@@ -32,3 +32,6 @@ User Side: Uses Haarcascade for fast face detection and Facenet to match face em
 
 Database
 A PostgreSQL database with a schema of 8 tables, each with a unique 128-bit UUID primary key.
+Schema:
+![image](https://github.com/user-attachments/assets/b7cfaf80-7159-4014-8f99-1bac7174d51b)
+
