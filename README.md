@@ -41,16 +41,23 @@ Workflow of the Project:
 
 Images of the App:
 
+Login Pages
 ![Screenshot 2024-08-23 012234](https://github.com/user-attachments/assets/db912150-32db-4ee3-b169-9c8afca34e33)
 ![Screenshot 2024-08-23 012326](https://github.com/user-attachments/assets/85118026-e62f-4116-9308-e49a2d24799d)
+
+Manage Students
 ![Screenshot 2024-08-23 012427](https://github.com/user-attachments/assets/26d8d07f-ae99-482c-8f29-8ef702fd5cca)
 ![Screenshot 2024-08-23 012538](https://github.com/user-attachments/assets/bf756fba-2d16-4fcc-a823-e714deff7727)
 ![Screenshot 2024-08-23 012624](https://github.com/user-attachments/assets/81c43066-3d67-43fe-a41a-973175ec7f84)
+
+Manage Classes
 ![Screenshot 2024-08-23 012656](https://github.com/user-attachments/assets/2d00da82-33c7-4b1c-b40c-fe2cfb793bd2)
 ![Screenshot 2024-08-23 012744](https://github.com/user-attachments/assets/e9233b6d-1430-40a3-9009-77bd0834720b)
 ![Screenshot 2024-08-23 012807](https://github.com/user-attachments/assets/d2c45d03-9dd2-47f3-86f6-89376db3879e)
 ![Screenshot 2024-08-23 012834](https://github.com/user-attachments/assets/8f0441ae-f5cb-4d90-9170-f0fc8936fd09)
 ![Screenshot 2024-08-23 012856](https://github.com/user-attachments/assets/72205a7e-5b49-4404-99c6-d7d09523c814)
+
+Verification in the User Login
 ![Screenshot 2024-08-23 012916](https://github.com/user-attachments/assets/728bd696-cff9-4091-a47f-2dc6b03e4f79)
 ![Screenshot 2024-08-23 013032](https://github.com/user-attachments/assets/41e61b49-82e9-473e-8b3d-3658e8eaf9ab)
 ![Screenshot 2024-08-23 013058](https://github.com/user-attachments/assets/fdf0f822-e5e6-4be8-9da4-1946f2345d26)
