@@ -34,9 +34,11 @@ Database
 A PostgreSQL database with a schema of 8 tables, each with a unique 128-bit UUID primary key.
 
 Schema:
+
 ![image](https://github.com/user-attachments/assets/b7cfaf80-7159-4014-8f99-1bac7174d51b)
 
 Workflow of the Project:
+
 ![Screenshot 2024-08-20 135559](https://github.com/user-attachments/assets/e6ac25ab-88eb-4f32-9406-7e3417ab2dd6)
 
 Images of the App:
@@ -56,9 +58,9 @@ Manage Classes
 ![Screenshot 2024-08-23 012807](https://github.com/user-attachments/assets/d2c45d03-9dd2-47f3-86f6-89376db3879e)
 ![Screenshot 2024-08-23 012834](https://github.com/user-attachments/assets/8f0441ae-f5cb-4d90-9170-f0fc8936fd09)
 ![Screenshot 2024-08-23 012856](https://github.com/user-attachments/assets/72205a7e-5b49-4404-99c6-d7d09523c814)
+![Screenshot 2024-08-23 012916](https://github.com/user-attachments/assets/728bd696-cff9-4091-a47f-2dc6b03e4f79)
 
 Verification in the User Login
-![Screenshot 2024-08-23 012916](https://github.com/user-attachments/assets/728bd696-cff9-4091-a47f-2dc6b03e4f79)
 ![Screenshot 2024-08-23 013032](https://github.com/user-attachments/assets/41e61b49-82e9-473e-8b3d-3658e8eaf9ab)
 ![Screenshot 2024-08-23 013058](https://github.com/user-attachments/assets/fdf0f822-e5e6-4be8-9da4-1946f2345d26)
 
